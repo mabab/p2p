@@ -21,9 +21,9 @@ export default class VideoChatSubscriberComponent extends Component {
         let videoElement = document.createElement('video');
         videoElement.setAttribute('autoplay', '');
         videoElement.setAttribute('playsinline', '');
-        videoElement.setAttribute('muted', '');
+        // videoElement.setAttribute('muted', '');
         this.attachMediaStream(videoElement, stream);
-        videoElement.muted = 'muted';
+        // videoElement.muted = 'muted';
         // videoElement.play();
 
         return videoElement;
