@@ -29,17 +29,35 @@ export default class VideoChatComponent extends Component {
 
         this.publisherStream = await this.getStream();
 
-        new WebRTC({
+        let webrtc = new WebRTC({
             room: 1,
+            uuid: this.connectionId,
+            outbound: ably.sendData,
             peerSettings: {
                 trickle: true,
                 config: {
                     iceTransportPolicy: 'all',
                     reconnectTimer: 3000,
                     iceServers: this.iceServers
-                }
+                },
+                stream: this.publisherStream
             },
-        })
+            onStream: (stream) =>{
+                this.subscribeStream = stream;
+            }
+        });
+
+
+        ably.signalListener('get-offer', (raw) =>{
+            let data = JSON.parse(raw);
+            webrtc.onJoined(data)
+        }, false);
+
+        ably.signalListener('signal', (raw) =>{
+            let data = JSON.parse(raw);
+            webrtc.onSignal(data)
+        }, false);
+
 
         // let local = this.connectionId;
         // let peer;

@@ -99,6 +99,7 @@ export default class Adapter {
         return this.loadingPromise;
     }
 
+    @action
     sendData(type, data){
         let stringifyData = (typeof data === 'object') ? JSON.stringify(data) : data;
         let packages = getPackages(stringifyData);

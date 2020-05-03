@@ -1,5 +1,5 @@
 import SimplePeer from "simple-peer";
-import {sendEvent} from '@ember/object/events';
+import {sendEvent, addListener} from '@ember/object/events';
 import {action} from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import {next} from '@ember/runloop';
@@ -114,6 +114,11 @@ export default class WebRTCPeer {
     @action
     emit(eventName, ...opt){
         sendEvent(this, eventName, opt)
+    }
+
+    @action
+    on(eventName, callback){
+        addListener(this, eventName, this, callback)
     }
 
     // We got a signal from the remote peer and will use it now to establish the connection
