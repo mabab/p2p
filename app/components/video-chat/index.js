@@ -37,13 +37,7 @@ export default class VideoChatComponent extends Component {
                 config: {
                     iceTransportPolicy: 'all',
                     reconnectTimer: 3000,
-                    iceServers: [{
-                        urls: 'stun:turn01.brie.fi:5349',
-                    }, {
-                        urls: 'turn:turn01.brie.fi:5349',
-                        username: 'brie',
-                        credential: 'fi',
-                    }]
+                    iceServers: this.iceServers
                 },
                 stream: this.publisherStream,
                 // sdpTransform: sdp => {
@@ -103,31 +97,5 @@ export default class VideoChatComponent extends Component {
         );
     }
 
-    iceServers = [
-        {
-            url: "stun:global.stun.twilio.com:3478?transport=udp",
-            urls: "stun:global.stun.twilio.com:3478?transport=udp",
-        },
-        {
-            url: "turn:global.turn.twilio.com:3478?transport=udp",
-            username:
-                "7c2abd406c4517910475f586b35da630580d62a5a30be538732db227bd81e9a0",
-            urls: "turn:global.turn.twilio.com:3478?transport=udp",
-            credential: "abyDo4TdSCyVlC7UMBo4gnEiskeO+NFkvBQXR4sEDGM=",
-        },
-        {
-            url: "turn:global.turn.twilio.com:3478?transport=tcp",
-            username:
-                "7c2abd406c4517910475f586b35da630580d62a5a30be538732db227bd81e9a0",
-            urls: "turn:global.turn.twilio.com:3478?transport=tcp",
-            credential: "abyDo4TdSCyVlC7UMBo4gnEiskeO+NFkvBQXR4sEDGM=",
-        },
-        {
-            url: "turn:global.turn.twilio.com:443?transport=tcp",
-            username:
-                "7c2abd406c4517910475f586b35da630580d62a5a30be538732db227bd81e9a0",
-            urls: "turn:global.turn.twilio.com:443?transport=tcp",
-            credential: "abyDo4TdSCyVlC7UMBo4gnEiskeO+NFkvBQXR4sEDGM=",
-        },
-    ]
+    iceServers = [{"url": "stun:global.stun.twilio.com:3478?transport=udp", "urls": "stun:global.stun.twilio.com:3478?transport=udp"}, {"url": "turn:global.turn.twilio.com:3478?transport=udp", "username": "ef4e000a64eea19fe3201f85c4bbc1f3d3a857437fa0c3b6794fe5a8c545ac08", "urls": "turn:global.turn.twilio.com:3478?transport=udp", "credential": "U2etktvgVw8vq/IYHjRQdfSTkIUa3Kg+3RKpo7WcuYc="}, {"url": "turn:global.turn.twilio.com:3478?transport=tcp", "username": "ef4e000a64eea19fe3201f85c4bbc1f3d3a857437fa0c3b6794fe5a8c545ac08", "urls": "turn:global.turn.twilio.com:3478?transport=tcp", "credential": "U2etktvgVw8vq/IYHjRQdfSTkIUa3Kg+3RKpo7WcuYc="}, {"url": "turn:global.turn.twilio.com:443?transport=tcp", "username": "ef4e000a64eea19fe3201f85c4bbc1f3d3a857437fa0c3b6794fe5a8c545ac08", "urls": "turn:global.turn.twilio.com:443?transport=tcp", "credential": "U2etktvgVw8vq/IYHjRQdfSTkIUa3Kg+3RKpo7WcuYc="}]
 }
