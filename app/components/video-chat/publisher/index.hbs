@@ -1,4 +1,14 @@
 
 <div class="publisher">
     {{{this.videoElement}}}
+
+    <div class="button-wrap">
+        <button {{on 'click' this.onMuteVideo}}>
+            {{if this.isEnabledVideo 'Disable' 'Enable'}} video
+        </button>
+        <button {{on 'click' this.onMuteAudio}}>
+            {{if this.isEnabledAudio 'Disable' 'Enable'}} Mute audio
+        </button>
+    </div>
+
 </div>

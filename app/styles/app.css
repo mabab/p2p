@@ -19,4 +19,27 @@ body{
 .video-wrap video{
     width: 100%;
     height: 100%;
+    background: #ccc;
+}
+
+.publisher{
+    position: relative;
+}
+
+.publisher .button-wrap{
+    opacity: 0.3;
+    position: absolute;
+    z-index: 999;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    height: 30px;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+
+.publisher:hover .button-wrap{
+    opacity: 1;
 }
