@@ -15,6 +15,7 @@ export default class VideoChatComponent extends Component {
     @service router;
 
     @alias('router.currentRoute.queryParams.room') room;
+    @alias('router.currentRoute.queryParams.video') video;
 
     attachMediaStream(element, stream) {
         if ('srcObject' in element) {
@@ -50,7 +51,7 @@ export default class VideoChatComponent extends Component {
 
         await ably.isInit();
 
-        this.publisherStream = await this.getStream();
+        this.publisherStream = await this.getStream(this.video !== undefined ? this.video : true);
 
         let webrtc = new WebRTC({
             room: 1,
@@ -109,21 +110,27 @@ export default class VideoChatComponent extends Component {
         });
     }
 
-    async getStream() {
+    async getStream(video = true) {
         let constains = {
             audio: {
                 echoCancellation: true,
                 noiseSuppression: true,
                 autoGainControl: true
             },
-            video: {
+            video: false
+        };
+
+        if (video){
+            constains.video = {
                 frameRate: {
                     min: 1,
-                    ideal: 15,
+                        ideal: 15,
                 },
                 facingMode: 'user'
-            },
-        };
+            }
+        }
+
+
 
         return (
             navigator &&
