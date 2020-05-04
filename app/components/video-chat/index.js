@@ -67,12 +67,12 @@ export default class VideoChatComponent extends Component {
                     iceServers: this.iceServers
                 },
                 stream: this.publisherStream,
-                sdpTransform: sdp => {
-                    let newSDP = sdp
-                    newSDP = this.setMediaBitrate(newSDP, 'video', 320)
-                    newSDP = this.setMediaBitrate(newSDP, 'audio', 80)
-                    return newSDP
-                }
+                // sdpTransform: sdp => {
+                //     let newSDP = sdp
+                //     newSDP = this.setMediaBitrate(newSDP, 'video', 320)
+                //     newSDP = this.setMediaBitrate(newSDP, 'audio', 80)
+                //     return newSDP
+                // }
             }
         });
 
