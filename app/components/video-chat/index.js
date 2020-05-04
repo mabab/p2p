@@ -38,11 +38,7 @@ export default class VideoChatComponent extends Component {
                     iceTransportPolicy: 'all',
                     reconnectTimer: 3000,
                     iceServers: [{
-                        urls: 'stun:turn01.brie.fi:5349',
-                    }, {
-                        urls: 'turn:turn01.brie.fi:5349',
-                        username: 'brie',
-                        credential: 'fi',
+                        urls: 'stun:turn01.brie.fi:5349'
                     }]
                 },
                 stream: this.publisherStream,
