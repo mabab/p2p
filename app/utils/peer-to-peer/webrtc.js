@@ -1,5 +1,6 @@
 import WebRTCPeer from "./webrtc-peer";
 import {action} from '@ember/object';
+import {sendEvent} from '@ember/object/events';
 
 export default class WebRTC {
     static isSupported() {
@@ -15,7 +16,8 @@ export default class WebRTC {
         uuid = `${Number(new Date())}-tmp-uuid`,
         outbound = null,
         inbount = () => {},
-        onStream = () => {}
+        onStream = () => {},
+        onDestroyStream = () => {}
     }) {
         this.peerSettings = peerSettings;
         this.outbound = outbound;
@@ -24,21 +26,19 @@ export default class WebRTC {
         if (this.outbound){
             this.outbound('get-offer', {uuid: this.uuid})
         }
-
-        if (onStream){
-            this.onStream = onStream;
-        }
+        this.onStream = onStream;
+        this.onDestroyStream = onDestroyStream;
     }
 
     @action
-    onJoined(remote){
+    onJoined({uuid}){
         let local = this.uuid;
 
-        let peer = this.peerConnections[remote];
+        let peer = this.peerConnections[uuid];
 
         if (!peer){
             this.handlePeer({
-                remote,
+                remote: uuid,
                 local,
                 initiator: true
             });
@@ -46,17 +46,21 @@ export default class WebRTC {
     }
 
     @action
-    onSignal(data) {
-        console.log(data);
-        let peer = this.peerConnections[data.from];
+    onSignal({from, to, signal}) {
+        console.log(this.uuid, to)
+
+        if (this.uuid !== to){
+            return false;
+        }
+        let peer = this.peerConnections[from];
         if (!peer) {
             peer = this.handlePeer({
-                remote: data.from,
-                local: data.to,
+                remote: from,
+                local: to,
                 initiator: false
             })
         }
-        peer.signal(data.signal);
+        peer.signal(signal);
     }
 
     @action
@@ -65,8 +69,12 @@ export default class WebRTC {
     }
 
     @action
-    onRemove(){
-
+    onRemove(uuid){
+        let peer = this.peerConnections[uuid]
+        if (peer) {
+            peer.close()
+            delete this.peerConnections[uuid];
+        }
     }
 
     handlePeer({remote, local, initiator = false}){
@@ -89,7 +97,14 @@ export default class WebRTC {
 
         peer.on('stream', (stream) =>{
             if (this.onStream){
+                stream.peerId = remote;
                 this.onStream(stream);
+            }
+        })
+
+        peer.on('close', () => {
+            if (this.onDestroyStream){
+                this.onDestroyStream(peer.stream);
             }
         })
 

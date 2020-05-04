@@ -8,8 +8,7 @@ import {addListener} from '@ember/object/events';
 
 export default class VideoChatComponent extends Component {
     @tracked publisherStream = null;
-    @tracked subscribeStream = null;
-    @tracked subscribeStream2 = null;
+    @tracked subscribeStreams = [];
     @tracked answer = false;
     connectionId = '';
 
@@ -34,7 +33,7 @@ export default class VideoChatComponent extends Component {
             uuid: this.connectionId,
             outbound: ably.sendData,
             peerSettings: {
-                trickle: true,
+                trickle: false,
                 config: {
                     iceTransportPolicy: 'all',
                     reconnectTimer: 3000,
@@ -43,7 +42,13 @@ export default class VideoChatComponent extends Component {
                 stream: this.publisherStream
             },
             onStream: (stream) =>{
-                this.subscribeStream = stream;
+                this.subscribeStreams = [...this.subscribeStreams, stream]
+            },
+            onDestroyStream: (stream) => {
+
+                console.log(stream);
+
+                this.subscribeStreams = this.subscribeStreams.filter(item => item !== stream)
             }
         });
 
@@ -58,31 +63,10 @@ export default class VideoChatComponent extends Component {
             webrtc.onSignal(data)
         }, false);
 
+        ably.on('left.removed.user', ({uuid}) =>{
+            webrtc.onRemove(uuid);
+        })
 
-        // let local = this.connectionId;
-        // let peer;
-        // if (this.answer === true){
-        //     peer = new WebRTCPeer({initiator: false, stream: this.publisherStream});
-        // } else {
-        //     peer = new WebRTCPeer({initiator: true, stream: this.publisherStream});
-        // }
-        //
-        // addListener(peer, 'signal', (signal) =>{
-        //     console.log(signal);
-        //         ably.sendData('signal', {
-        //         signal
-        //     });
-        // });
-        //
-        // addListener(peer, 'stream', this, (stream) =>{
-        //     this.subscribeStream = stream;
-        // });
-        //
-        //
-        // ably.signalListener('signal', (data) =>{
-        //     let signal = JSON.parse(data).signal;
-        //     peer.signal(signal)
-        // });
 
     }
 

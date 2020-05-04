@@ -1,0 +1,22 @@
+body{
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.video-wrap{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-rows: repeat(auto-fit, minmax(50px, 1fr));
+    grid-gap: 10px;
+    width: 100vw;
+    height: 100vh;
+    background: #ccc;
+    justify-content: center;
+    align-content: baseline;
+}
+
+.video-wrap video{
+    width: 100%;
+    height: 100%;
+}

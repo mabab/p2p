@@ -103,8 +103,6 @@ export default class Adapter {
     sendData(type, data){
         let stringifyData = (typeof data === 'object') ? JSON.stringify(data) : data;
         let packages = getPackages(stringifyData);
-        console.log(this.channelName)
-
         let promises = packages.map((data) =>{
             return this.channel.publish('message', bodyGenerate(this.connectionId, type, data)).catch((err) =>{
                 sendEvent(this, 'exception', [err]);

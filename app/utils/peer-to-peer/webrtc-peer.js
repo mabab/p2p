@@ -42,7 +42,7 @@ export default class WebRTCPeer {
             },
         };
 
-        console.log('SimplePeer opts:', _options)
+        // console.log('SimplePeer opts:', _options)
 
         this.peer = new SimplePeer(_options);
 
@@ -76,9 +76,9 @@ export default class WebRTCPeer {
         this.error = error
         this.emit('error', error)
         this.close()
-        setTimeout(() => {
-            this.setupPeer(options) // ???
-        }, 1000)
+        // setTimeout(() => {
+        //     this.setupPeer(options) // ???
+        // }, 1000)
     }
 
     @action
@@ -138,7 +138,7 @@ export default class WebRTCPeer {
 
     @action
     close(){
-        this.emit('close');
+        this.emit('close', [this.uuid]);
         this.active = false;
         this.peer?.destroy();
     }
