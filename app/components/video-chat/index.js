@@ -45,7 +45,7 @@ export default class VideoChatComponent extends Component {
                         credential: 'fi',
                     }]
                 },
-                // stream: this.publisherStream,
+                stream: this.publisherStream,
                 // sdpTransform: sdp => {
                 //     log('sdpTransform', state.bandwidth) // , sdp)
                 //     let newSDP = sdp
