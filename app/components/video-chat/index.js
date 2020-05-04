@@ -119,8 +119,7 @@ export default class VideoChatComponent extends Component {
                 frameRate: {
                     min: 1,
                         ideal: 15,
-                },
-                facingMode: 'user'
+                }
             }
         }
 
