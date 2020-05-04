@@ -51,7 +51,9 @@ export default class VideoChatComponent extends Component {
 
         await ably.isInit();
 
-        this.publisherStream = await this.getStream(this.video !== undefined ? this.video : true);
+        console.log(this.video !== undefined)
+        let video = this.video !== undefined ? (this.video === 'true')  : true
+        this.publisherStream = await this.getStream(video);
 
         let webrtc = new WebRTC({
             room: 1,
@@ -129,6 +131,8 @@ export default class VideoChatComponent extends Component {
                 facingMode: 'user'
             }
         }
+
+        console.log(video);
 
 
 
