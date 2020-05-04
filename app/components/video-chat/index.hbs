@@ -1,8 +1,8 @@
 <div {{did-insert this.didInsert}} class="video-wrap">
     <VideoChat::Publisher @stream={{this.publisherStream}}/>
 
-    {{#each this.subscribeStreams as |stream|}}
-        <VideoChat::Subscriber @stream={{stream}}/>
+    {{#each this.subscribes as |subscriber|}}
+        <VideoChat::Subscriber @videoElement={{subscriber.element}}/>
     {{/each}}
 </div>
 

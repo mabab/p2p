@@ -107,7 +107,7 @@ export default class WebRTCPeer {
     onStream(stream){
         console.log('new stream', stream);
         this.stream = stream;
-        this.emit('stream', stream);
+        this.emit('stream', this.remote, stream);
     }
 
 

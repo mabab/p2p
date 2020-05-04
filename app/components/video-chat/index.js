@@ -3,14 +3,34 @@ import {action} from "@ember/object";
 import {tracked} from "@glimmer/tracking";
 import Ably from "../../utils/signaling/ably";
 import WebRTC from "../../utils/peer-to-peer/webrtc";
-import SimplePeer from "simple-peer";
-import {addListener} from '@ember/object/events';
+import { A } from '@ember/array';
+import {later} from '@ember/runloop';
 
 export default class VideoChatComponent extends Component {
     @tracked publisherStream = null;
-    @tracked subscribeStreams = [];
+    @tracked subscribes = A();
     @tracked answer = false;
     connectionId = '';
+
+    attachMediaStream(element, stream) {
+        if ('srcObject' in element) {
+            element.srcObject = stream
+        } else {
+            element.src = window.URL.createObjectURL(stream) // for older browsers
+        }
+    }
+
+    getVideoEl(stream){
+        let videoElement = document.createElement('video');
+        videoElement.setAttribute('autoplay', '');
+        videoElement.setAttribute('playsinline', '');
+        // videoElement.setAttribute('muted', '');
+        this.attachMediaStream(videoElement, stream);
+        // videoElement.muted = 'muted';
+        // videoElement.play();
+
+        return videoElement;
+    }
 
     @action
     async didInsert(element) {
@@ -54,17 +74,20 @@ export default class VideoChatComponent extends Component {
                 //     }
                 //     return newSDP
                 // }
-            },
-            onStream: (stream) =>{
-                this.subscribeStreams = [...this.subscribeStreams, stream]
-            },
-            onDestroyStream: (stream) => {
-
-                console.log(stream);
-
-                this.subscribeStreams = this.subscribeStreams.filter(item => item !== stream)
             }
         });
+
+        webrtc.on('new-video-element', ({id, element}) =>{
+
+            console.log(id, element)
+
+            this.subscribes.pushObject({id, element});
+            this.notifyPropertyChange('subscribes')
+        })
+
+        webrtc.on('destroy-video-element', ({id}) =>{
+            this.subscribes = this.subscribes.filter(item => item.id !== id);
+        })
 
 
         ably.signalListener('get-offer', (raw) =>{
@@ -79,15 +102,23 @@ export default class VideoChatComponent extends Component {
 
         ably.on('left.removed.user', ({uuid}) =>{
             webrtc.onRemove(uuid);
-        })
-
-
+        });
     }
 
     async getStream() {
         let constains = {
-            audio: true,
-            video: true,
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true
+            },
+            video: {
+                frameRate: {
+                    min: 1,
+                    ideal: 15,
+                },
+                facingMode: 'user'
+            },
         };
 
         return (

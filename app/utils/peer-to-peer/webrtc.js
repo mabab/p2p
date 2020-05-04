@@ -1,6 +1,6 @@
 import WebRTCPeer from "./webrtc-peer";
 import {action} from '@ember/object';
-import {sendEvent} from '@ember/object/events';
+import {addListener, sendEvent} from '@ember/object/events';
 
 export default class WebRTC {
     static isSupported() {
@@ -26,22 +26,19 @@ export default class WebRTC {
         if (this.outbound){
             this.outbound('get-offer', {uuid: this.uuid})
         }
-        this.onStream = onStream;
-        this.onDestroyStream = onDestroyStream;
     }
 
     @action
     onJoined({uuid}){
         let local = this.uuid;
-
         let peer = this.peerConnections[uuid];
-
         if (!peer){
             this.handlePeer({
                 remote: uuid,
                 local,
                 initiator: true
             });
+            this.updateStatus();
         }
     }
 
@@ -61,6 +58,7 @@ export default class WebRTC {
             })
         }
         peer.signal(signal);
+        this.updateStatus();
     }
 
     @action
@@ -72,8 +70,9 @@ export default class WebRTC {
     onRemove(uuid){
         let peer = this.peerConnections[uuid]
         if (peer) {
-            peer.close()
+            peer.close();
             delete this.peerConnections[uuid];
+            this.destroyStream(uuid);
         }
     }
 
@@ -95,21 +94,69 @@ export default class WebRTC {
             })
         });
 
-        peer.on('stream', (stream) =>{
-            if (this.onStream){
-                stream.peerId = remote;
-                this.onStream(stream);
-            }
-        })
+        peer.on('stream', this.newStream);
+        peer.on('track', this.updateStatus);
 
-        peer.on('close', () => {
-            if (this.onDestroyStream && peer.stream){
-                this.onDestroyStream(peer.stream);
-            }
-        })
 
         return peer;
     }
 
+    close() {
+        Object.values(this.peerConnections).map((peer) =>{
+            peer.close();
+        });
+        this.peerConnections = {}
+    }
 
+    @action
+    cleanup(){
+        this.close();
+    }
+
+    @action
+    updateStatus(){
+        let status = Object.values(this.peerConnections).map(peer => {
+            let { active, initiator, local, remote, error } = peer
+            return {
+                active, initiator, local, remote, error, peer
+            }
+        })
+        sendEvent(this, 'status', [{ status }])
+    }
+
+    @action
+    newStream(id, stream){
+        let element = this.getVideoEl(stream);
+        sendEvent(this, 'new-video-element', [{ id, element }])
+    }
+
+    @action
+    destroyStream(id){
+
+        console.log('destroyStream', id)
+
+        sendEvent(this, 'destroy-video-element', [{ id }])
+    }
+
+    attachMediaStream(element, stream) {
+        if ('srcObject' in element) {
+            element.srcObject = stream
+        } else {
+            element.src = window.URL.createObjectURL(stream) // for older browsers
+        }
+    }
+
+    getVideoEl(stream){
+        let videoElement = document.createElement('video');
+        videoElement.setAttribute('autoplay', '');
+        videoElement.setAttribute('playsinline', '');
+        this.attachMediaStream(videoElement, stream);
+
+        return videoElement;
+    }
+
+    @action
+    on(eventName, callback){
+        addListener(this, eventName, this, callback)
+    }
 }
