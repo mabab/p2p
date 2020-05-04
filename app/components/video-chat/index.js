@@ -67,20 +67,12 @@ export default class VideoChatComponent extends Component {
                     iceServers: this.iceServers
                 },
                 stream: this.publisherStream,
-                // sdpTransform: sdp => {
-                //     log('sdpTransform', state.bandwidth) // , sdp)
-                //     let newSDP = sdp
-                //     if (state.bandwidth) {
-                //         //   newSDP = updateBandwidthRestriction(sdp, 10)
-                //         // log('Old SDP', newSDP)
-                //         newSDP = setMediaBitrate(newSDP, 'video', 233)
-                //         newSDP = setMediaBitrate(newSDP, 'audio', 80)
-                //         // log('New SDP', newSDP)
-                //     } else {
-                //         newSDP = removeBandwidthRestriction(sdp)
-                //     }
-                //     return newSDP
-                // }
+                sdpTransform: sdp => {
+                    let newSDP = sdp
+                    newSDP = this.setMediaBitrate(newSDP, 'video', 320)
+                    newSDP = this.setMediaBitrate(newSDP, 'audio', 80)
+                    return newSDP
+                }
             }
         });
 
@@ -141,6 +133,44 @@ export default class VideoChatComponent extends Component {
             navigator.mediaDevices &&
             navigator.mediaDevices.getUserMedia(constains)
         );
+    }
+
+    setMediaBitrate(sdp, media, bitrate) {
+        let lines = sdp.split('\n')
+        let line = -1
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].indexOf('m=' + media) === 0) {
+                line = i
+                break
+            }
+        }
+        if (line === -1) {
+            // log('Could not find the m line for', media)
+            return sdp
+        }
+        // log('Found the m line for', media, 'at line', line)
+
+        // Pass the m line
+        line++
+
+        // Skip i and c lines
+        while (lines[line].indexOf('i=') === 0 || lines[line].indexOf('c=') === 0) {
+            line++
+        }
+
+        // If we're on a b line, replace it
+        if (lines[line].indexOf('b') === 0) {
+            // log('Replaced b line at line', line)
+            lines[line] = 'b=AS:' + bitrate
+            return lines.join('\n')
+        }
+
+        // Add a new b line
+        // log('Adding new b line before line', line)
+        let newLines = lines.slice(0, line)
+        newLines.push('b=AS:' + bitrate)
+        newLines = newLines.concat(lines.slice(line, lines.length))
+        return newLines.join('\n')
     }
 
     iceServers = [{"url": "stun:global.stun.twilio.com:3478?transport=udp", "urls": "stun:global.stun.twilio.com:3478?transport=udp"}, {"url": "turn:global.turn.twilio.com:3478?transport=udp", "username": "ef4e000a64eea19fe3201f85c4bbc1f3d3a857437fa0c3b6794fe5a8c545ac08", "urls": "turn:global.turn.twilio.com:3478?transport=udp", "credential": "U2etktvgVw8vq/IYHjRQdfSTkIUa3Kg+3RKpo7WcuYc="}, {"url": "turn:global.turn.twilio.com:3478?transport=tcp", "username": "ef4e000a64eea19fe3201f85c4bbc1f3d3a857437fa0c3b6794fe5a8c545ac08", "urls": "turn:global.turn.twilio.com:3478?transport=tcp", "credential": "U2etktvgVw8vq/IYHjRQdfSTkIUa3Kg+3RKpo7WcuYc="}, {"url": "turn:global.turn.twilio.com:443?transport=tcp", "username": "ef4e000a64eea19fe3201f85c4bbc1f3d3a857437fa0c3b6794fe5a8c545ac08", "urls": "turn:global.turn.twilio.com:443?transport=tcp", "credential": "U2etktvgVw8vq/IYHjRQdfSTkIUa3Kg+3RKpo7WcuYc="}]
