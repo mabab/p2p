@@ -7,8 +7,5 @@
   */
   "disableAnalytics": false,
   "ssl": true,
-  "port": 8082,
-  "ssl-cert": "/etc/letsencrypt/live/j1.allright.io/fullchain.pem",
-  "ssl-key": "/etc/letsencrypt/live/j1.allright.io/privkey.pem"
-
+  "port": 8082
 }
