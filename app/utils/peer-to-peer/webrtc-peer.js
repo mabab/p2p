@@ -76,9 +76,9 @@ export default class WebRTCPeer {
         this.error = error
         this.emit('error', error)
         this.close()
-        // setTimeout(() => {
-        //     this.setupPeer(options) // ???
-        // }, 1000)
+        setTimeout(() => {
+            this.setupPeer(options) // ???
+        }, 1000)
     }
 
     @action
