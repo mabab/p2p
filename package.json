@@ -62,5 +62,7 @@
     "ember": {
         "edition": "octane"
     },
-    "dependencies": {}
+    "dependencies": {
+        "express": "^4.17.1"
+    }
 }
