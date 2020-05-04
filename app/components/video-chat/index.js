@@ -39,7 +39,21 @@ export default class VideoChatComponent extends Component {
                     reconnectTimer: 3000,
                     iceServers: this.iceServers
                 },
-                stream: this.publisherStream
+                // stream: this.publisherStream,
+                // sdpTransform: sdp => {
+                //     log('sdpTransform', state.bandwidth) // , sdp)
+                //     let newSDP = sdp
+                //     if (state.bandwidth) {
+                //         //   newSDP = updateBandwidthRestriction(sdp, 10)
+                //         // log('Old SDP', newSDP)
+                //         newSDP = setMediaBitrate(newSDP, 'video', 233)
+                //         newSDP = setMediaBitrate(newSDP, 'audio', 80)
+                //         // log('New SDP', newSDP)
+                //     } else {
+                //         newSDP = removeBandwidthRestriction(sdp)
+                //     }
+                //     return newSDP
+                // }
             },
             onStream: (stream) =>{
                 this.subscribeStreams = [...this.subscribeStreams, stream]
