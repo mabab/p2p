@@ -33,7 +33,7 @@ export default class VideoChatComponent extends Component {
             uuid: this.connectionId,
             outbound: ably.sendData,
             peerSettings: {
-                trickle: false,
+                trickle: true,
                 config: {
                     iceTransportPolicy: 'all',
                     reconnectTimer: 3000,
