@@ -67,12 +67,12 @@ export default class VideoChatComponent extends Component {
                     iceServers: this.iceServers
                 },
                 stream: this.publisherStream,
-                // sdpTransform: sdp => {
-                //     let newSDP = sdp
-                //     newSDP = this.setMediaBitrate(newSDP, 'video', 320)
-                //     newSDP = this.setMediaBitrate(newSDP, 'audio', 80)
-                //     return newSDP
-                // }
+                sdpTransform: sdp => {
+                    let newSDP = sdp
+                    newSDP = this.setMediaBitrate(newSDP, 'video', 233)
+                    newSDP = this.setMediaBitrate(newSDP, 'audio', 80)
+                    return newSDP
+                }
             }
         });
 
@@ -116,10 +116,12 @@ export default class VideoChatComponent extends Component {
 
         if (video){
             constains.video = {
-                frameRate: {
-                    min: 1,
-                        ideal: 15,
-                }
+                // frameRate: {
+                //     min: 1,
+                //     ideal: 15,
+                // },
+                width: { ideal: 640 },
+                height: { ideal: 480 },
             }
         }
 
