@@ -4,13 +4,17 @@ import {tracked} from "@glimmer/tracking";
 import Ably from "../../utils/signaling/ably";
 import WebRTC from "../../utils/peer-to-peer/webrtc";
 import { A } from '@ember/array';
-import {later} from '@ember/runloop';
+import {alias} from '@ember/object/computed';
+import {inject as service} from '@ember/service';
 
 export default class VideoChatComponent extends Component {
     @tracked publisherStream = null;
     @tracked subscribes = A();
     @tracked answer = false;
     connectionId = '';
+    @service router;
+
+    @alias('router.currentRoute.queryParams.room') room;
 
     attachMediaStream(element, stream) {
         if ('srcObject' in element) {
@@ -38,7 +42,7 @@ export default class VideoChatComponent extends Component {
         // let adapter = await import("webrtc-adapter");
         let ably = new Ably({
             options: {
-                channelName: 'test',
+                channelName: this.room || 'test',
                 connectionId: this.connectionId
             },
             key: 'XzYLAw.TYRvcQ:VbpJWMJ3pnDtsqr7'
