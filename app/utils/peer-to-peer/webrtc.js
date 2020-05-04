@@ -103,7 +103,7 @@ export default class WebRTC {
         })
 
         peer.on('close', () => {
-            if (this.onDestroyStream && peer.stream)){
+            if (this.onDestroyStream && peer.stream){
                 this.onDestroyStream(peer.stream);
             }
         })
